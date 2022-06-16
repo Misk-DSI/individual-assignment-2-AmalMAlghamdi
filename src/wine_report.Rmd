@@ -1,0 +1,111 @@
+---
+title: "Wine Report"
+author: "Amal Alghamdi"
+date: '2022-06-15'
+output: html_document
+
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_dir = "../"
+    )
+  })
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(janitor)
+library(GGally)
+library(here)
+library(kableExtra)
+
+```
+
+## Introduction
+This report  explores the red_wine_quality dataset, more details on the wine data will be given.
+
+```{r, echo=FALSE}
+wine <- read_csv("../data/winequality-red.csv", show_col_types = FALSE)
+wine %>% 
+  clean_names() -> wine
+wine 
+```
+
+
+
+## Dataset
+The datasets can be found  available from the UCI machine learning website ,\
+Input variables (based on physicochemical tests):\
+1 - fixed acidity\
+2 - volatile acidity\
+3 - citric acid\
+4 - residual sugar\
+5 - chlorides\
+6 - free sulfur dioxide\
+7 - total sulfur dioxide\
+8 - density\
+9 - pH\
+10 - sulphates\
+11 - alcohol\
+12 - quality \
+-Contain\
+Rows: 1,599
+ Columns: 12
+
+```{r, echo=FALSE}
+kable(head(wine,5), "html") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+```{r, echo=FALSE}
+glimpse(wine)
+summary(wine)
+```
+## Exploratory Data Analysis
+
+
+This section exploratory data analysis will be performed via histograms. 
+
+
+```{r, echo=FALSE}
+ggplot(wine, aes(quality, fill = quality)) +
+  geom_bar(fill = seq(1, 6, 1)) +
+  geom_text(position = "stack", stat='count', aes(label=..count..), vjust = -0.5) +
+  theme(plot.title=element_text(hjust=0.5)) +
+  labs(x="Wine Quality",
+       y="Observations",
+       title = "Red Wine Quality Ratings Distribution")
+
+```
+
+
+From Figure bellow, one can see that the  density and pH  are normally distributed, as well as volatile acidity.    
+
+```{r, echo=FALSE}
+wine %>%
+  keep(is.numeric) %>% 
+  gather() %>% 
+  ggplot(aes(value,fill=key)) +
+    facet_wrap(~ key, scales = "free") +
+    geom_histogram(bins=sqrt(nrow(wine))) +
+    theme(legend.position="none")
+    
+```
+
+## Conclusion
+
+To sum up, from our exploratory analysis we conclude that red wine quality is strongly correlated with  alcohol and volatile acidity.
+
+
+
+
+
+
+
+
+
+
+
+
